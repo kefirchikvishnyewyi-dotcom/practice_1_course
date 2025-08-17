@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport">
+    <title>Слайдер изображений</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+        
+        .slider-container {
+            position: relative;
+            width: 80%;
+            max-width: 800px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        .slider {
+            display: flex;
+            transition: transform 0.5s ease-in-out;
+        }
+        
+        .slide {
+            min-width: 100%;
+        }
+        
+        .slide img {
+            width: 100%;
+            display: block;
+        }
+        
+        .slider-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background-color: #fff;
+        }
+        
+        .slider-btn {
+            width: 40px;
+            height: 40px;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .slider-btn:hover {
+            background-color: #555;
+        }
+        
+        .slider-counter {
+            font-size: 18px;
+            color: #333;
+        }
+        
+        .slider-dots {
+            display: flex;
+            justify-content: center;
+            padding: 10px 0;
+            background-color: #fff;
+        }
+        
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin: 0 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .dot.active {
+            background-color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="slider-container">
+        <div class="slider">
+            <div class="slide">
+                <img src="./static/devuska-igraet-na-skripke.jpg">
+            </div>
+            <div class="slide">
+                <img src="./static/srednaa-cast-studentki-igraet-na-kontrabase.jpg"">
+            </div>
+            <div class="slide">
+                <img src="./static/studentka-igraet-na-skripke.jpg">
+            </div>
+            <div class="slide">
+                <img src="./static/vid-na-skripku-v-magazine-muzykal-nyh-instrumentov.jpg">
+            </div>
+            <div class="slide">
+                <img src="./static/zensina-derzit-skripku-radom-s-sagami.jpg">
+            </div>
+        </div>
+        
+        <div class="slider-controls">
+            <button class="slider-btn prev-btn">❮</button>
+            <div class="slider-counter">
+                <span class="current-slide">1</span> / <span class="total-slides">5</span>
+            </div>
+            <button class="slider-btn next-btn">❯</button>
+        </div>
+        
+        <div class="slider-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const SLIDER                    = document.querySelector('.slider');
+            const SLIDES                    = document.querySelectorAll('.slide');
+            const PREV_BTN                  = document.querySelector('.prev-btn');
+            const NEXT_BTN                  = document.querySelector('.next-btn');
+            const DOTS                      = document.querySelectorAll('.dot');
+            const CURRENT_SLIDE_EL          = document.querySelector('.current-slide');
+            const TOTAL_SLIDES_EL           = document.querySelector('.total-slides');
+            
+            let CURRENT_SLIDE               = 0;
+            const SLIDE_COUNT               = SLIDES.length;
+            
+            TOTAL_SLIDES_EL.textContent     = SLIDE_COUNT;
+            
+            function init_slider() {
+                update_slider();
+            }
+            
+            function go_to_slide(n) {
+                CURRENT_SLIDE = (n + SLIDE_COUNT) % SLIDE_COUNT;
+                update_slider();
+            }
+            
+            function update_slider() {
+                SLIDER.style.transform = `translateX(-${CURRENT_SLIDE * 100}%)`;
+                CURRENT_SLIDE_EL.textContent = CURRENT_SLIDE + 1;
+                
+                DOTS.forEach((dot, index) => {
+                    dot.classList.toggle('active', index === CURRENT_SLIDE);
+                });
+            }
+            
+            function next_slide() {
+                go_to_slide(CURRENT_SLIDE + 1);
+            }
+            
+            function prev_slide() {
+                go_to_slide(CURRENT_SLIDE - 1);
+            }
+            
+            NEXT_BTN.addEventListener('click', next_slide);
+            PREV_BTN.addEventListener('click', prev_slide);
+            
+            DOTS.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    go_to_slide(index);
+                });
+            });
+            
+            let slide_interval = setInterval(next_slide, 5000);
+            
+            SLIDER.addEventListener('mouseenter', () => {
+                clearInterval(slide_interval);
+            });
+            
+            SLIDER.addEventListener('mouseleave', () => {
+                slide_interval = setInterval(next_slide, 5000);
+            });
+            
+            init_slider();
+        });
+    </script>
+</body>
+</html>
