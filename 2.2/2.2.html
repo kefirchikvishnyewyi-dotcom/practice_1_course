@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+
+        .first-block {
+            display: flex;
+
+            padding-top: 50px;
+            padding-left: 50px;
+        }
+
+        .field-names div {
+            margin-bottom: 10px;
+        }
+
+        .field {
+            margin-left: 50px;
+        }
+
+        .field div {
+            margin-bottom: 10px;
+        }
+
+        .month {
+            visibility: hidden;
+        }
+
+        .year {
+            visibility: hidden;
+        }
+    </style>
+    <title>2.2.1</title>
+</head>
+<body>
+
+    <p>Напишите программу, которая запрашивает у пользователя последовательно день его рождения, месяц и год;</p>
+    <div class="first-block">
+        <div class="field-namess">
+            <div>
+                <label id="day">Пожалуйста, введите день своего рождения</label>
+            </div>
+            <div class="month">
+                <label id="month">Месяц</label>
+            </div>
+            <div class="year">
+                <label id="year">Год</label>
+            </div>
+        </div>
+        <div class="field">
+            <div>
+                <input type="number" for="day" id="field_day" />
+            </div>
+            <div class="month">
+                <input type="number" for="month" id="field_month" />
+            </div>
+            <div class="year">
+                <input type="number" for="year" id="field_year" />
+            </div>
+        </div>
+    </div>
+
+    <p>Напишите функцию, которая определяет какому дню недели соответствует эта дата?</p>
+    <div>
+        <label id="day_of_week">Пожалуйста, введите дату в формате YYYY-MM-DD</label>
+        <input type="text" for="day_of_week" id="field_day_of_week" />
+        <div id="transferred_day"></div>
+    </div>
+
+    <p>Напишите функцию, которая определяет - високосный это был год, или нет?</p>
+    <div>
+        <label id="number_year">Пожалуйста, введите число года</label>
+        <input type="number" for="number_year" id="field_number_year"></input>
+        <div id="definition_year"></div>
+    </div>
+
+
+    <p>Напишите функцию, которая определяет сколько сейчас лет пользователю;</p>
+    <div>
+        <label id="birthday">Пожалуйста, введите дату своего рождения</label>
+        <input type="text" for="birthday" id="field_birthday" />
+        <div id="number_years"></div>
+    </div>
+
+    <p>Реализуйте вывод в консоль даты рождения пользователя в формате дд мм гггг, где цифры прорисованы звёздочками (*), как на электронном табло.</p>
+    <div>
+        <label id="date_birth">Пожалуйста, введите дату своего рождения в формате YYYY-MM-DD</label>
+        <input type="text" for="date_birth" id="field_date_birth" />
+        <h3 id="asterisks" style="white-space: pre-wrap; font-family: monospace;"></h3>
+    </div>
+
+
+    <script>
+        const DAY                   = document.getElementById('field_day');
+        const MONTH                 = document.getElementById('field_month');
+        const YEAR                  = document.getElementById('field_year');
+
+        const MONTH_CLASS           = document.querySelector('.month');
+        const YEAR_CLASS            = document.querySelector('.year');
+
+        const INPUT_DAY_OF_WEEK     = document.getElementById('field_day_of_week');
+        const DIV_TRANSFERRED_DAY   = document.getElementById('transferred_day');
+
+        const INPUT_NUMBER_YEAR     = document.getElementById('field_number_year');
+        const DIV_DEFINITION_YEAR   = document.getElementById('definition_year');
+
+        const INPUT_BIRTHDAY        = document.getElementById('field_birthday');
+        const DIV_NUMBER_YEARS      = document.getElementById('number_years');
+
+        const INPUT_DATE_BIRTH      = document.getElementById('field_date_birth');
+        const DIV_ASTERISKS         = document.getElementById('asterisks');
+
+        document.addEventListener('keyup', (event) => {
+            const targetElement = event.target;
+            
+            if (!(DAY.value == '')) {
+                
+                MONTH_CLASS.style.visibility = 'visible';
+                MONTH.style.visibility = 'visible';
+
+            }
+
+            if (!(MONTH.value == '')) {
+                
+                YEAR_CLASS.style.visibility = 'visible';
+                YEAR.style.visibility = 'visible';
+
+            }
+
+            if (!(INPUT_DAY_OF_WEEK.value == '')) {
+
+                const date = new Date(INPUT_DAY_OF_WEEK.value);
+                DIV_TRANSFERRED_DAY.innerText = getDayOfWeekName(date);
+            
+            }
+
+            if (!(INPUT_NUMBER_YEAR.value == '')) {
+
+                DIV_DEFINITION_YEAR.innerText = isLeapYearShort(INPUT_NUMBER_YEAR.value);
+
+            }
+
+            if (!(INPUT_BIRTHDAY.value == '')) {
+
+                DIV_NUMBER_YEARS.innerText = calculateAge(INPUT_BIRTHDAY.value);
+
+            }
+
+            if (!(INPUT_DATE_BIRTH.value == '')) {
+
+                DIV_ASTERISKS.textContent = drawNumberWithStars(INPUT_DATE_BIRTH.value);
+
+            }
+        });
+
+        function getDayOfWeekName(date) {
+            const days = ['Воскресенье', 'Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота'];
+            return days[date.getDay()];
+        }
+
+        function isLeapYearShort(year) {
+            return (year % 400 === 0) || (year % 100 !== 0 && year % 4 === 0);
+        }
+
+        function calculateAge(birthDate) {
+            // Преобразуем входные данные в объект Date
+            const birth = new Date(birthDate);
+            if (isNaN(birth)) throw new Error('Некорректная дата рождения');
+            
+            const today = new Date();
+            
+            // Вычисляем разницу в годах
+            let age = today.getFullYear() - birth.getFullYear();
+            
+            // Корректируем возраст, если день рождения еще не наступил в этом году
+            const monthDiff = today.getMonth() - birth.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birth.getDate())) {
+                age--;
+            }
+            
+            return age;
+        }
+
+        function drawNumberWithStars(date) {
+
+            const dash = [
+                '     ',
+                '     ',
+                '     ',
+                '*****',
+                '     ',
+                '     ',
+                '     '
+            ];
+
+            const digitPatterns = [
+                [
+                    '*****',
+                    '*   *',
+                    '*   *',
+                    '*   *',
+                    '*   *',
+                    '*   *',
+                    '*****'
+                ],
+                [
+                    '    *',
+                    '  * *',
+                    ' *  *',
+                    '*   *',
+                    '    *',
+                    '    *',
+                    '    *'
+                ],
+                [
+                    '*****',
+                    '*   *',
+                    '    *',
+                    '*****',
+                    '*    ',
+                    '*    ',
+                    '*****'
+                ],
+                [
+                    '*****',
+                    '*   *',
+                    '    *',
+                    '  ***',
+                    '    *',
+                    '*   *',
+                    '*****'
+                ],
+                [
+                    '    *',
+                    '   **',
+                    '  * *',
+                    ' *  *',
+                    '*****',
+                    '    *',
+                    '    *'
+                ],
+                [
+                    '*****',
+                    '*    ',
+                    '*    ',
+                    '*****',
+                    '    *',
+                    '    *',
+                    '*****'
+                ],
+                [
+                    '*****',
+                    '*    ',
+                    '*    ',
+                    '*****',
+                    '*   *',
+                    '*   *',
+                    '*****'
+                ],
+                [
+                    '*****',
+                    '    *',
+                    '   * ',
+                    ' *   ',
+                    '*    ',
+                    '*    ',
+                    '*    '
+                ],
+                [
+                    '*****',
+                    '*   *',
+                    '*   *',
+                    '*****',
+                    '*   *',
+                    '*   *',
+                    '*****'
+                ],
+                [
+                    '*****',
+                    '*   *',
+                    '*   *',
+                    '*****',
+                    '    *',
+                    '    *',
+                    '*****'
+                ]
+            ];
+
+            let split_date = date.split('');
+            let selected_numbers = split_date.map((el) => {
+                let el_int = parseInt(el);
+                let num = null;
+                if ([0,1,2,3,4,5,6,7,8,9].indexOf(el_int) != -1) {
+                    digitPatterns.forEach((e, index) => {
+                        if ( el_int == index ) {
+                            num = e;
+                        }
+                    })
+                } else {
+                    num = dash;
+                }
+                return num;
+            });
+
+            let displayed_value = '';
+
+            let formatting_numbers = () => {
+                let line_written = ``;
+
+                for (let i = 0; i <= 6; i++) {
+                    selected_numbers.forEach((el, index) => {
+
+                        line_written = line_written + el[i] + ' ';
+
+                        if ((index + 1) == selected_numbers.length) {
+                            displayed_value = displayed_value + line_written + '\r\n';
+                            line_written = '';
+                        }
+                    });
+                }
+            };
+
+            formatting_numbers();
+
+            return displayed_value;
+        }
+
+    </script>
+</body>
+</html>
